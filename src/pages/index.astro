@@ -9,9 +9,7 @@ import Layout from "../layouts/Layout.astro";
         <img src="/media/Background.png" alt="Image" />
       </div>
       <div class="hero-content">
-        <!-- Header Navbar -->
         <nav class="header-navbar">
-          <!-- Navbar content goes here -->
           <ul>
             <li><a href="#">Home</a></li>
             <li><a href="#">News</a></li>
@@ -27,9 +25,11 @@ import Layout from "../layouts/Layout.astro";
           <div class="sections">
             <section id="latest-section" class="music-section active">
               <h2>LATEST SECTION</h2>
+              <div id="tracksListLatest"></div>
             </section>
             <section id="highlighted-section" class="music-section">
               <h2>HIGHLIGHTED SECTION</h2>
+              <div id="tracksListHighlighted"></div>
             </section>
           </div>
         </div>
@@ -70,7 +70,7 @@ import Layout from "../layouts/Layout.astro";
 
   h1 {
     color: #e5e3d2;
-    font-size: 10rem;
+    font-size: 8rem;
     font-weight: 500;
     line-height: 1;
     text-align: left;
@@ -118,6 +118,7 @@ import Layout from "../layouts/Layout.astro";
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    text-align: left;
   }
 
   .buttons-container button::after {
@@ -140,6 +141,7 @@ import Layout from "../layouts/Layout.astro";
 
   .sections {
     margin-top: 20px;
+    padding: 10px 20px;
   }
 
   .music-section {
@@ -156,6 +158,9 @@ import Layout from "../layouts/Layout.astro";
 </style>
 
 <script>
+  const CLIENT_ID = import.meta.env.PUBLIC_CLIENT_ID;
+  const CLIENT_SECRET = import.meta.env.PUBLIC_CLIENT_SECRET;
+
   document.addEventListener("DOMContentLoaded", function () {
     const latestBtn = document.getElementById("latest-btn");
     const highlightedBtn = document.getElementById("highlighted-btn");
@@ -178,4 +183,179 @@ import Layout from "../layouts/Layout.astro";
       });
     }
   });
+
+  // Function to fetch data from Spotify API
+  async function fetchData(url: string, options: RequestInit): Promise<any> {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  }
+
+  // Function to authenticate with Spotify API and get access token
+  async function authenticate(): Promise<string> {
+    const clientId = CLIENT_ID;
+    const clientSecret = CLIENT_SECRET;
+
+    const basicAuth = btoa(`${clientId}:${clientSecret}`);
+    const options: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${basicAuth}`,
+      },
+      body: "grant_type=client_credentials",
+    };
+    const tokenUrl = "https://accounts.spotify.com/api/token";
+
+    const data = await fetchData(tokenUrl, options);
+    return data.access_token;
+  }
+
+  // Function to retrieve Gaxve's artist ID
+  async function getArtistID(token: string): Promise<string> {
+    const artistName = "Gaxve";
+    const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
+    const options: RequestInit = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const data = await fetchData(searchUrl, options);
+    return data.artists.items[0].id;
+  }
+
+  // Function to retrieve Gaxve's top tracks
+  async function getTopTracks(artistID: string, token: string): Promise<any[]> {
+    const topTracksUrl = `https://api.spotify.com/v1/artists/${artistID}/top-tracks?country=US`;
+    const options: RequestInit = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const data = await fetchData(topTracksUrl, options);
+    return data.tracks.slice(0, 4);
+  }
+
+  // Function to retrieve Gaxve's recent releases
+  async function getRecentReleases(
+    artistID: string,
+    token: string
+  ): Promise<any[]> {
+    const recentReleasesUrl = `https://api.spotify.com/v1/artists/${artistID}/albums?include_groups=album,single&market=US&limit=4`;
+    const options: RequestInit = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    const data = await fetchData(recentReleasesUrl, options);
+    return data.items.slice(0, 4);
+  }
+
+  // Add type definitions for track
+  interface Track {
+    name: string;
+  }
+
+  const style = document.createElement("style");
+  style.textContent = `
+  .clickable {
+    cursor: pointer;
+    position: relative;
+  }
+
+  .clickable::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px; /* Adjust this value to change the distance of the underline from the text */
+    width: 0; /* Set initial width to 0 */
+    height: 2px; /* Adjust this value to change the thickness of the underline */
+    background-color: #aecacd; /* Underline color */
+    transition: width 0.3s; /* Add transition effect to width changes */
+  }
+
+  .clickable:hover::after {
+    width: 100%; /* Set width to 100% on hover */
+  }
+`;
+  document.head.appendChild(style);
+
+  // Main function to retrieve and display Gaxve's top tracks
+  async function getGaxveTopTracks(): Promise<void> {
+    try {
+      const token = await authenticate();
+      const artistID = await getArtistID(token);
+      const topTracks = await getTopTracks(artistID, token);
+      displayTopTracks(topTracks);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  // Main function to retrieve and display Gaxve's recent releases
+  async function getGaxveRecentReleases(): Promise<void> {
+    try {
+      const token = await authenticate();
+      const artistID = await getArtistID(token);
+      const recentReleases = await getRecentReleases(artistID, token);
+      displayRecentReleases(recentReleases);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  // Function to display top tracks
+  function displayTopTracks(tracks: Track[]): void {
+    const tracksListHighlighted = document.getElementById(
+      "tracksListHighlighted"
+    );
+    if (!tracksListHighlighted) return;
+
+    tracksListHighlighted.innerHTML = "";
+
+    tracks.forEach((track) => {
+      const p = document.createElement("p");
+      const span = document.createElement("span");
+      span.textContent = track.name;
+
+      // Add click event listener to the span element
+      span.addEventListener("click", () => {
+        console.log("Track clicked:", track.name);
+      });
+
+      span.classList.add("clickable");
+
+      p.appendChild(span);
+      tracksListHighlighted.appendChild(p);
+    });
+  }
+
+  // Function to display recent releases
+  function displayRecentReleases(releases: any[]): void {
+    const tracksListLatest = document.getElementById("tracksListLatest");
+    if (!tracksListLatest) return;
+
+    tracksListLatest.innerHTML = "";
+
+    releases.forEach((release) => {
+      const p = document.createElement("p");
+      const span = document.createElement("span");
+      span.textContent = release.name;
+
+      // Add click event listener to the span element
+      span.addEventListener("click", () => {
+        console.log("Release clicked:", release.name);
+      });
+
+      span.classList.add("clickable");
+
+      p.appendChild(span);
+      tracksListLatest.appendChild(p);
+    });
+  }
+
+  getGaxveRecentReleases();
+  getGaxveTopTracks();
 </script>
