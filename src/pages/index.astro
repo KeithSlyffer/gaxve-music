@@ -24,11 +24,11 @@ import Layout from "../layouts/Layout.astro";
           </div>
           <div class="sections">
             <section id="latest-section" class="music-section active">
-              <h2>LATEST SECTION</h2>
+              <h2>LATEST SONGS</h2>
               <div id="tracksListLatest"></div>
             </section>
             <section id="highlighted-section" class="music-section">
-              <h2>HIGHLIGHTED SECTION</h2>
+              <h2>HIGHLIGHTED SONGS</h2>
               <div id="tracksListHighlighted"></div>
             </section>
           </div>
@@ -156,6 +156,9 @@ import Layout from "../layouts/Layout.astro";
     padding: 5rem;
   }
 </style>
+
+<script src="https://kit.fontawesome.com/37e149e4dc.js" crossorigin="anonymous"
+></script>
 
 <script>
   const CLIENT_ID = import.meta.env.PUBLIC_CLIENT_ID;
@@ -315,14 +318,45 @@ import Layout from "../layouts/Layout.astro";
 
     tracksListHighlighted.innerHTML = "";
 
+    let prevClickedSpan: HTMLSpanElement | null = null;
+
     tracks.forEach((track) => {
       const p = document.createElement("p");
       const span = document.createElement("span");
-      span.textContent = track.name;
+      const playIcon = document.createElement("i");
+      playIcon.classList.add("fa-solid", "fa-play");
 
-      // Add click event listener to the span element
+      span.textContent = "- " + track.name;
+
+      // Inside the click event listener for the span element
       span.addEventListener("click", () => {
-        console.log("Track clicked:", track.name);
+        const hasPlayIcon = span.contains(playIcon);
+
+        // Remove the play icon and the space from the span
+        if (prevClickedSpan && prevClickedSpan !== span) {
+          const prevPlayIcon = prevClickedSpan.querySelector(".fa-play");
+          if (prevPlayIcon) {
+            prevClickedSpan.removeChild(prevPlayIcon);
+            prevClickedSpan.removeChild(prevClickedSpan.childNodes[0]); // Remove the space
+          }
+        }
+
+        // Toggle the play icon for the clicked song
+        if (hasPlayIcon) {
+          // If the play icon exists, remove it and the space
+          span.removeChild(playIcon);
+          span.removeChild(span.childNodes[0]); // Remove the space
+        } else {
+          // If the play icon doesn't exist, add it along with the space
+          span.insertBefore(playIcon, span.firstChild);
+          span.insertBefore(
+            document.createTextNode("\u00A0\u00A0"),
+            playIcon.nextSibling
+          );
+        }
+
+        // Update the prevClickedSpan to the clicked span
+        prevClickedSpan = span;
       });
 
       span.classList.add("clickable");
@@ -339,14 +373,44 @@ import Layout from "../layouts/Layout.astro";
 
     tracksListLatest.innerHTML = "";
 
+    let prevClickedSpan: HTMLSpanElement | null = null;
+
     releases.forEach((release) => {
       const p = document.createElement("p");
       const span = document.createElement("span");
-      span.textContent = release.name;
+      const playIcon = document.createElement("i");
+      playIcon.classList.add("fa-solid", "fa-play");
 
-      // Add click event listener to the span element
+      span.textContent = "- " + release.name;
+
       span.addEventListener("click", () => {
-        console.log("Release clicked:", release.name);
+        const hasPlayIcon = span.contains(playIcon);
+
+        // Remove the play icon and the space from the prevClickedSpan, if any
+        if (prevClickedSpan && prevClickedSpan !== span) {
+          const prevPlayIcon = prevClickedSpan.querySelector(".fa-play");
+          if (prevPlayIcon) {
+            prevClickedSpan.removeChild(prevPlayIcon);
+            prevClickedSpan.removeChild(prevClickedSpan.childNodes[0]); // Remove the space
+          }
+        }
+
+        // Toggle the play icon for the clicked song
+        if (hasPlayIcon) {
+          // If the play icon exists, remove it and the space
+          span.removeChild(playIcon);
+          span.removeChild(span.childNodes[0]); // Remove the space
+        } else {
+          // If the play icon doesn't exist, add it along with the space
+          span.insertBefore(playIcon, span.firstChild);
+          span.insertBefore(
+            document.createTextNode("\u00A0\u00A0"),
+            playIcon.nextSibling
+          );
+        }
+
+        // Update the prevClickedSpan to the clicked span
+        prevClickedSpan = span;
       });
 
       span.classList.add("clickable");
