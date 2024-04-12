@@ -50,7 +50,6 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
-  /** Main: #FF5B19, Background #161616, Secondaries: #E5E3D2 #AECACD */
   .content {
     display: flex;
     height: 100vh;
@@ -88,7 +87,6 @@ import Layout from "../layouts/Layout.astro";
     margin: 0;
   }
 
-  /* Styling for the header navbar */
   .header-navbar {
     position: sticky;
     top: 0;
@@ -183,9 +181,6 @@ import Layout from "../layouts/Layout.astro";
 ></script>
 
 <script>
-  const CLIENT_ID = import.meta.env.PUBLIC_CLIENT_ID;
-  const CLIENT_SECRET = import.meta.env.PUBLIC_CLIENT_SECRET;
-
   document.addEventListener("DOMContentLoaded", function () {
     const latestBtn = document.getElementById("latest-btn");
     const highlightedBtn = document.getElementById("highlighted-btn");
@@ -193,24 +188,45 @@ import Layout from "../layouts/Layout.astro";
     const highlightedSection = document.getElementById("highlighted-section");
 
     if (latestBtn && highlightedBtn && latestSection && highlightedSection) {
-      latestBtn.addEventListener("click", function () {
-        latestBtn.classList.add("active");
-        highlightedBtn.classList.remove("active");
-        latestSection.classList.add("active");
-        highlightedSection.classList.remove("active");
-      });
-
-      highlightedBtn.addEventListener("click", function () {
-        highlightedBtn.classList.add("active");
-        latestBtn.classList.remove("active");
-        highlightedSection.classList.add("active");
-        latestSection.classList.remove("active");
-      });
+      latestBtn.addEventListener(
+        "click",
+        toggleSection.bind(
+          null,
+          latestBtn,
+          highlightedBtn,
+          latestSection,
+          highlightedSection
+        )
+      );
+      highlightedBtn.addEventListener(
+        "click",
+        toggleSection.bind(
+          null,
+          highlightedBtn,
+          latestBtn,
+          highlightedSection,
+          latestSection
+        )
+      );
     }
   });
 
-  // Function to fetch data from Spotify API
-  async function fetchData(url: string, options: RequestInit): Promise<any> {
+  async function toggleSection(
+    activeBtn: { classList: { add: (arg0: string) => void } },
+    inactiveBtn: { classList: { remove: (arg0: string) => void } },
+    activeSection: { classList: { add: (arg0: string) => void } },
+    inactiveSection: { classList: { remove: (arg0: string) => void } }
+  ) {
+    activeBtn.classList.add("active");
+    inactiveBtn.classList.remove("active");
+    activeSection.classList.add("active");
+    inactiveSection.classList.remove("active");
+  }
+
+  async function fetchData(
+    url: string | URL | Request,
+    options: RequestInit | undefined
+  ) {
     const response = await fetch(url, options);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -218,13 +234,12 @@ import Layout from "../layouts/Layout.astro";
     return response.json();
   }
 
-  // Function to authenticate with Spotify API and get access token
-  async function authenticate(): Promise<string> {
-    const clientId = CLIENT_ID;
-    const clientSecret = CLIENT_SECRET;
+  async function authenticate() {
+    const clientId = import.meta.env.PUBLIC_CLIENT_ID;
+    const clientSecret = import.meta.env.PUBLIC_CLIENT_SECRET;
 
     const basicAuth = btoa(`${clientId}:${clientSecret}`);
-    const options: RequestInit = {
+    const options = {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -238,11 +253,10 @@ import Layout from "../layouts/Layout.astro";
     return data.access_token;
   }
 
-  // Function to retrieve Gaxve's artist ID
-  async function getArtistID(token: string): Promise<string> {
+  async function getArtistID(token: any) {
     const artistName = "Gaxve";
     const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
-    const options: RequestInit = {
+    const options = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -251,10 +265,9 @@ import Layout from "../layouts/Layout.astro";
     return data.artists.items[0].id;
   }
 
-  // Function to retrieve Gaxve's top tracks
-  async function getTopTracks(artistID: string, token: string): Promise<any[]> {
+  async function getTopTracks(artistID: any, token: any) {
     const topTracksUrl = `https://api.spotify.com/v1/artists/${artistID}/top-tracks?country=US`;
-    const options: RequestInit = {
+    const options = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -263,13 +276,9 @@ import Layout from "../layouts/Layout.astro";
     return data.tracks.slice(0, 4);
   }
 
-  // Function to retrieve Gaxve's recent releases
-  async function getRecentReleases(
-    artistID: string,
-    token: string
-  ): Promise<any[]> {
+  async function getRecentReleases(artistID: any, token: any) {
     const recentReleasesUrl = `https://api.spotify.com/v1/artists/${artistID}/albums?include_groups=album,single&market=US&limit=4`;
-    const options: RequestInit = {
+    const options = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -278,69 +287,16 @@ import Layout from "../layouts/Layout.astro";
     return data.items.slice(0, 4);
   }
 
-  // Add type definitions for track
-  interface Track {
-    name: string;
-  }
-
-  const style = document.createElement("style");
-  style.textContent = `
-  .clickable {
-    cursor: pointer;
-    position: relative;
-  }
-
-  .clickable::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -3px; /* Adjust this value to change the distance of the underline from the text */
-    width: 0; /* Set initial width to 0 */
-    height: 2px; /* Adjust this value to change the thickness of the underline */
-    background-color: #aecacd; /* Underline color */
-    transition: width 0.3s; /* Add transition effect to width changes */
-  }
-
-  .clickable:hover::after {
-    width: 100%; /* Set width to 100% on hover */
-  }
-`;
-  document.head.appendChild(style);
-
-  // Main function to retrieve and display Gaxve's top tracks
-  async function getGaxveTopTracks(): Promise<void> {
-    try {
-      const token = await authenticate();
-      const artistID = await getArtistID(token);
-      const topTracks = await getTopTracks(artistID, token);
-      displayTopTracks(topTracks);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
-  // Main function to retrieve and display Gaxve's recent releases
-  async function getGaxveRecentReleases(): Promise<void> {
-    try {
-      const token = await authenticate();
-      const artistID = await getArtistID(token);
-      const recentReleases = await getRecentReleases(artistID, token);
-      displayRecentReleases(recentReleases);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
   async function getTrackInfo(
-    trackName: string,
-    artistID: string,
-    token: string
-  ): Promise<any> {
+    trackName: string | number | boolean,
+    artistID: any,
+    token: any
+  ) {
     const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(
       trackName
     )}+artist:Gaxve&type=track&limit=1&market=US`;
 
-    const options: RequestInit = {
+    const options = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -358,177 +314,7 @@ import Layout from "../layouts/Layout.astro";
     }
   }
 
-  // Function to display top tracks
-  function displayTopTracks(tracks: Track[]): void {
-    const tracksListHighlighted = document.getElementById(
-      "tracksListHighlighted"
-    );
-    if (!tracksListHighlighted) return;
-
-    tracksListHighlighted.innerHTML = "";
-
-    let prevClickedSpan: HTMLSpanElement | null = null;
-
-    tracks.forEach((track) => {
-      const p = document.createElement("p");
-      const span = document.createElement("span");
-      const playIcon = document.createElement("i");
-      playIcon.classList.add("fa-solid", "fa-play");
-
-      span.textContent = "- " + track.name;
-
-      // Inside the click event listener for the span element
-      span.addEventListener("click", async (event) => {
-        const audioPlayer = document.getElementById(
-          "audioPlayer"
-        ) as HTMLAudioElement;
-        const coverArtImage = document.getElementById(
-          "coverArtImage"
-        ) as HTMLImageElement;
-        if (!audioPlayer || !coverArtImage) return;
-
-        try {
-          const token = await authenticate();
-          const artistID = await getArtistID(token);
-          const trackName =
-            (event.target as HTMLSpanElement).textContent
-              ?.replace("- ", "")
-              .trim() || "";
-          const trackInfo: any = await getTrackInfo(trackName, artistID, token);
-
-          if (audioPlayer.src === trackInfo.preview_url) {
-            if (audioPlayer.paused) {
-              audioPlayer.play(); // If paused, play the audio
-              updateCoverArt(trackInfo.coverArtUrl);
-            } else {
-              audioPlayer.pause(); // If playing, pause the audio
-            }
-          } else {
-            audioPlayer.src = trackInfo.preview_url;
-            audioPlayer.play();
-            updateCoverArt(trackInfo.coverArtUrl);
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      });
-
-      function updateCoverArt(coverArtUrl: string) {
-        const coverArtImage = document.getElementById(
-          "coverArtImage"
-        ) as HTMLImageElement;
-        if (coverArtImage) {
-          coverArtImage.src = coverArtUrl;
-        }
-      }
-
-      span.classList.add("clickable");
-
-      p.appendChild(span);
-      tracksListHighlighted.appendChild(p);
-    });
-  }
-
-  // Function to display recent releases
-  function displayRecentReleases(releases: any[]): void {
-    const tracksListLatest = document.getElementById("tracksListLatest");
-    if (!tracksListLatest) return;
-
-    tracksListLatest.innerHTML = "";
-
-    let prevClickedSpan: HTMLSpanElement | null = null;
-
-    releases.forEach((release) => {
-      const p = document.createElement("p");
-      const span = document.createElement("span");
-      const playIcon = document.createElement("i");
-      playIcon.classList.add("fa-solid", "fa-play");
-
-      span.textContent = "- " + release.name;
-
-      span.addEventListener("click", async (event) => {
-        const audioPlayer: HTMLAudioElement | null = document.getElementById(
-          "audioPlayer"
-        ) as HTMLAudioElement;
-        if (!audioPlayer) return;
-
-        try {
-          const token: string = await authenticate();
-          const artistID: string = await getArtistID(token);
-          const trackName =
-            (event.target as HTMLSpanElement).textContent
-              ?.replace("- ", "")
-              .trim() || "";
-          const trackInfo: any = await getTrackInfo(trackName, artistID, token);
-
-          if (audioPlayer.src === trackInfo.preview_url) {
-            if (audioPlayer.paused) {
-              audioPlayer.play(); // If paused, play the audio
-              addPlayIcon(span);
-            } else {
-              audioPlayer.pause(); // If playing, pause the audio
-              removePlayIcon(span);
-            }
-          } else {
-            audioPlayer.src = trackInfo.preview_url;
-            audioPlayer.play();
-            if (prevClickedSpan) {
-              removePlayIcon(prevClickedSpan);
-            }
-            addPlayIcon(span);
-            prevClickedSpan = span;
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      });
-
-      function addPlayIcon(span: HTMLSpanElement) {
-        const playIcon = document.createElement("i");
-        playIcon.classList.add("fa-solid", "fa-play");
-        span.insertBefore(playIcon, span.firstChild);
-        span.insertBefore(
-          document.createTextNode("\u00A0\u00A0"),
-          playIcon.nextSibling
-        );
-      }
-
-      function removePlayIcon(span: HTMLSpanElement) {
-        const playIcon = span.querySelector(".fa-play");
-        if (playIcon) {
-          span.removeChild(playIcon);
-          span.removeChild(span.childNodes[0]); // Remove the space
-        }
-      }
-
-      span.classList.add("clickable");
-
-      p.appendChild(span);
-      tracksListLatest.appendChild(p);
-    });
-  }
-
-  interface Track {
-    name: string;
-  }
-
-  // Main function to retrieve and display Gaxve's top tracks and recent releases
-  async function getGaxveSongs(): Promise<void> {
-    try {
-      const token: string = await authenticate();
-      const artistID: string = await getArtistID(token);
-      const latestTracks: Track[] = await getRecentReleases(artistID, token);
-      const highlightedTracks: Track[] = await getTopTracks(artistID, token);
-      displaySongs(latestTracks, "latest");
-      displaySongs(highlightedTracks, "highlighted");
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
-
-  let prevClickedSpan: HTMLSpanElement | null = null;
-
-  function updateCoverArt(coverArtUrl: string) {
+  async function updateCoverArt(coverArtUrl: string): Promise<void> {
     const coverArtImage = document.getElementById(
       "coverArtImage"
     ) as HTMLImageElement;
@@ -537,92 +323,180 @@ import Layout from "../layouts/Layout.astro";
     }
   }
 
-  // Function to display songs
-  function displaySongs(songs: Track[], type: string): void {
-    const tracksList: HTMLElement | null = document.getElementById(
-      `tracksList${type.charAt(0).toUpperCase() + type.slice(1)}`
+  interface Track {
+    name: string;
+  }
+
+  let currentPlayingTrack: string | null = null;
+
+  async function displayTopTracks(tracks: Track[]): Promise<void> {
+    const tracksListHighlighted = document.getElementById(
+      "tracksListHighlighted"
     );
-    if (!tracksList) return;
+    if (!tracksListHighlighted) return;
 
-    tracksList.innerHTML = "";
+    tracksListHighlighted.innerHTML = "";
 
-    songs.forEach((song) => {
-      const p: HTMLParagraphElement = document.createElement("p");
-      const span: HTMLSpanElement = document.createElement("span");
-
-      span.textContent = "- " + song.name;
-
-      span.addEventListener("click", async (event) => {
-        const audioPlayer = document.getElementById(
-          "audioPlayer"
-        ) as HTMLAudioElement;
-        const coverArtImage = document.getElementById(
-          "coverArtImage"
-        ) as HTMLImageElement;
-        if (!audioPlayer || !coverArtImage) return;
-
-        try {
-          const token = await authenticate();
-          const artistID = await getArtistID(token);
-          const trackName =
-            (event.target as HTMLSpanElement).textContent
-              ?.replace("- ", "")
-              .trim() || "";
-          const trackInfo: any = await getTrackInfo(trackName, artistID, token);
-
-          if (audioPlayer.src === trackInfo.preview_url) {
-            if (audioPlayer.paused) {
-              audioPlayer.play();
-              addPlayIcon(span);
-            } else {
-              audioPlayer.pause();
-              removePlayIcon(span);
-            }
-          } else {
-            audioPlayer.src = trackInfo.preview_url;
-            audioPlayer.play();
-            const prevClickedSpan = tracksList.querySelector(
-              ".clicked"
-            ) as HTMLSpanElement;
-            if (prevClickedSpan) {
-              removePlayIcon(prevClickedSpan);
-              prevClickedSpan.classList.remove("clicked");
-            }
-            addPlayIcon(span);
-            span.classList.add("clicked");
-            updateCoverArt(trackInfo.coverArtUrl);
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      });
-
-      function addPlayIcon(span: HTMLSpanElement) {
-        const playIcon = document.createElement("i");
-        playIcon.classList.add("fa-solid", "fa-play");
-        span.insertBefore(playIcon, span.firstChild);
-        span.insertBefore(
-          document.createTextNode("\u00A0\u00A0"),
-          playIcon.nextSibling
-        );
+    tracks.forEach((track) => {
+      const p = document.createElement("p");
+      const span = createClickableSpan(track.name);
+      if (currentPlayingTrack === track.name) {
+        addPlayIcon(span);
       }
-
-      function removePlayIcon(span: HTMLSpanElement) {
-        const playIcon = span.querySelector(".fa-play");
-        if (playIcon) {
-          span.removeChild(playIcon);
-          span.removeChild(span.childNodes[0]);
-        }
-      }
-
-      span.classList.add("clickable");
-
       p.appendChild(span);
-      if (tracksList) tracksList.appendChild(p);
+      tracksListHighlighted.appendChild(p);
     });
   }
 
+  async function displayRecentReleases(releases: any[]): Promise<void> {
+    const tracksListLatest = document.getElementById("tracksListLatest");
+    if (!tracksListLatest) return;
+
+    tracksListLatest.innerHTML = "";
+
+    releases.forEach((release) => {
+      const p = document.createElement("p");
+      const span = createClickableSpan(release.name);
+      if (currentPlayingTrack === release.name) {
+        addPlayIcon(span);
+      }
+      p.appendChild(span);
+      tracksListLatest.appendChild(p);
+    });
+  }
+
+  function createClickableSpan(text: string): HTMLSpanElement {
+    const span = document.createElement("span");
+    span.textContent = "- " + text;
+    span.classList.add("clickable");
+    span.addEventListener("click", () => playTrack(text));
+    return span;
+  }
+
+  function addPlayIcon(span: HTMLSpanElement): void {
+    const playIcon = document.createElement("i");
+    playIcon.classList.add("fa-solid", "fa-play");
+    span.insertBefore(playIcon, span.firstChild);
+    span.insertBefore(
+      document.createTextNode("\u00A0\u00A0"),
+      playIcon.nextSibling
+    );
+  }
+
+  async function playTrack(trackName: string): Promise<void> {
+    const audioPlayer = document.getElementById(
+      "audioPlayer"
+    ) as HTMLAudioElement;
+    const coverArtImage = document.getElementById(
+      "coverArtImage"
+    ) as HTMLImageElement;
+    if (!audioPlayer || !coverArtImage) return;
+
+    try {
+      const token = await authenticate();
+      const artistID = await getArtistID(token);
+      const trackInfo = await getTrackInfo(trackName, artistID, token);
+
+      if (audioPlayer.src === trackInfo.preview_url) {
+        if (audioPlayer.paused) {
+          audioPlayer.play();
+          currentPlayingTrack = trackName;
+        } else {
+          audioPlayer.pause();
+          currentPlayingTrack = null;
+        }
+      } else {
+        audioPlayer.src = trackInfo.preview_url;
+        audioPlayer.play();
+        updateCoverArt(trackInfo.coverArtUrl);
+        currentPlayingTrack = trackName;
+      }
+
+      // Update displayed tracks to show play icon for the currently playing track
+      updateDisplay();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  function updateDisplay(): void {
+    const tracksListHighlighted = document.getElementById(
+      "tracksListHighlighted"
+    );
+    const tracksListLatest = document.getElementById("tracksListLatest");
+
+    if (tracksListHighlighted) {
+      const highlightedTracks =
+        tracksListHighlighted.getElementsByTagName("span");
+      for (let i = 0; i < highlightedTracks.length; i++) {
+        const span = highlightedTracks[i];
+        const trackName = span.textContent?.slice(2); // Remove the leading "- "
+        if (currentPlayingTrack === trackName) {
+          addPlayIcon(span);
+        } else {
+          removePlayIcon(span);
+        }
+      }
+    }
+
+    if (tracksListLatest) {
+      const latestTracks = tracksListLatest.getElementsByTagName("span");
+      for (let i = 0; i < latestTracks.length; i++) {
+        const span = latestTracks[i];
+        const trackName = span.textContent?.slice(2); // Remove the leading "- "
+        if (currentPlayingTrack === trackName) {
+          addPlayIcon(span);
+        } else {
+          removePlayIcon(span);
+        }
+      }
+    }
+  }
+
+  function removePlayIcon(span: HTMLSpanElement): void {
+    const playIcon = span.querySelector(".fa-play");
+    if (playIcon) {
+      span.removeChild(playIcon);
+      span.removeChild(span.childNodes[0]);
+    }
+  }
+
+  async function getGaxveSongs() {
+    try {
+      const token = await authenticate();
+      const artistID = await getArtistID(token);
+      const latestTracks = await getRecentReleases(artistID, token);
+      const highlightedTracks = await getTopTracks(artistID, token);
+      displayRecentReleases(latestTracks);
+      displayTopTracks(highlightedTracks);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   getGaxveSongs();
-  getGaxveRecentReleases();
-  getGaxveTopTracks();
+
+  const style = document.createElement("style");
+  style.textContent = `
+  .clickable {
+    cursor: pointer;
+    position: relative;
+  }
+
+  .clickable::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0;
+    height: 2px;
+    background-color: #aecacd;
+    transition: width 0.3s;
+  }
+
+  .clickable:hover::after {
+    width: 100%; /* Set width to 100% on hover */
+  }
+`;
+  document.head.appendChild(style);
 </script>
