@@ -22,15 +22,26 @@ import Layout from "../layouts/Layout.astro";
             <button id="latest-btn" class="active">LATEST</button>
             <button id="highlighted-btn">HIGHLIGHTED</button>
           </div>
-          <div class="sections">
+
+          <div class="player-section">
             <section id="latest-section" class="music-section active">
               <h2>LATEST SONGS</h2>
               <div id="tracksListLatest"></div>
             </section>
+
             <section id="highlighted-section" class="music-section">
               <h2>HIGHLIGHTED SONGS</h2>
               <div id="tracksListHighlighted"></div>
             </section>
+
+            <div class="audio-container" style="margin-top: 20px;">
+              <audio id="audioPlayer" controls>
+                Your browser does not support the audio element.
+              </audio>
+              <div class="image-container">
+                <img id="coverArtImage" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -153,7 +164,18 @@ import Layout from "../layouts/Layout.astro";
   }
 
   .music-content {
-    padding: 5rem;
+    padding: 3rem;
+    padding-inline: 5rem;
+  }
+
+  .player-section {
+    margin: 1.2rem;
+    margin-top: 2rem;
+  }
+
+  .image-container {
+    width: 300px;
+    height: auto;
   }
 </style>
 
@@ -309,6 +331,33 @@ import Layout from "../layouts/Layout.astro";
     }
   }
 
+  async function getTrackInfo(
+    trackName: string,
+    artistID: string,
+    token: string
+  ): Promise<any> {
+    const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+      trackName
+    )}+artist:Gaxve&type=track&limit=1&market=US`;
+
+    const options: RequestInit = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const data = await fetchData(searchUrl, options);
+      console.log("API Response:", data);
+      const trackInfo = data.tracks.items[0];
+      const coverArtUrl = trackInfo.album.images[0].url;
+      console.log(coverArtUrl);
+      return { ...trackInfo, coverArtUrl };
+    } catch (error) {
+      console.error("Error fetching track info:", error);
+      throw error;
+    }
+  }
+
   // Function to display top tracks
   function displayTopTracks(tracks: Track[]): void {
     const tracksListHighlighted = document.getElementById(
@@ -329,35 +378,49 @@ import Layout from "../layouts/Layout.astro";
       span.textContent = "- " + track.name;
 
       // Inside the click event listener for the span element
-      span.addEventListener("click", () => {
-        const hasPlayIcon = span.contains(playIcon);
+      span.addEventListener("click", async (event) => {
+        const audioPlayer = document.getElementById(
+          "audioPlayer"
+        ) as HTMLAudioElement;
+        const coverArtImage = document.getElementById(
+          "coverArtImage"
+        ) as HTMLImageElement;
+        if (!audioPlayer || !coverArtImage) return;
 
-        // Remove the play icon and the space from the span
-        if (prevClickedSpan && prevClickedSpan !== span) {
-          const prevPlayIcon = prevClickedSpan.querySelector(".fa-play");
-          if (prevPlayIcon) {
-            prevClickedSpan.removeChild(prevPlayIcon);
-            prevClickedSpan.removeChild(prevClickedSpan.childNodes[0]); // Remove the space
+        try {
+          const token = await authenticate();
+          const artistID = await getArtistID(token);
+          const trackName =
+            (event.target as HTMLSpanElement).textContent
+              ?.replace("- ", "")
+              .trim() || "";
+          const trackInfo: any = await getTrackInfo(trackName, artistID, token);
+
+          if (audioPlayer.src === trackInfo.preview_url) {
+            if (audioPlayer.paused) {
+              audioPlayer.play(); // If paused, play the audio
+              updateCoverArt(trackInfo.coverArtUrl);
+            } else {
+              audioPlayer.pause(); // If playing, pause the audio
+            }
+          } else {
+            audioPlayer.src = trackInfo.preview_url;
+            audioPlayer.play();
+            updateCoverArt(trackInfo.coverArtUrl);
           }
+        } catch (error) {
+          console.error("Error:", error);
         }
-
-        // Toggle the play icon for the clicked song
-        if (hasPlayIcon) {
-          // If the play icon exists, remove it and the space
-          span.removeChild(playIcon);
-          span.removeChild(span.childNodes[0]); // Remove the space
-        } else {
-          // If the play icon doesn't exist, add it along with the space
-          span.insertBefore(playIcon, span.firstChild);
-          span.insertBefore(
-            document.createTextNode("\u00A0\u00A0"),
-            playIcon.nextSibling
-          );
-        }
-
-        // Update the prevClickedSpan to the clicked span
-        prevClickedSpan = span;
       });
+
+      function updateCoverArt(coverArtUrl: string) {
+        const coverArtImage = document.getElementById(
+          "coverArtImage"
+        ) as HTMLImageElement;
+        if (coverArtImage) {
+          coverArtImage.src = coverArtUrl;
+        }
+      }
 
       span.classList.add("clickable");
 
@@ -383,35 +446,60 @@ import Layout from "../layouts/Layout.astro";
 
       span.textContent = "- " + release.name;
 
-      span.addEventListener("click", () => {
-        const hasPlayIcon = span.contains(playIcon);
+      span.addEventListener("click", async (event) => {
+        const audioPlayer: HTMLAudioElement | null = document.getElementById(
+          "audioPlayer"
+        ) as HTMLAudioElement;
+        if (!audioPlayer) return;
 
-        // Remove the play icon and the space from the prevClickedSpan, if any
-        if (prevClickedSpan && prevClickedSpan !== span) {
-          const prevPlayIcon = prevClickedSpan.querySelector(".fa-play");
-          if (prevPlayIcon) {
-            prevClickedSpan.removeChild(prevPlayIcon);
-            prevClickedSpan.removeChild(prevClickedSpan.childNodes[0]); // Remove the space
+        try {
+          const token: string = await authenticate();
+          const artistID: string = await getArtistID(token);
+          const trackName =
+            (event.target as HTMLSpanElement).textContent
+              ?.replace("- ", "")
+              .trim() || "";
+          const trackInfo: any = await getTrackInfo(trackName, artistID, token);
+
+          if (audioPlayer.src === trackInfo.preview_url) {
+            if (audioPlayer.paused) {
+              audioPlayer.play(); // If paused, play the audio
+              addPlayIcon(span);
+            } else {
+              audioPlayer.pause(); // If playing, pause the audio
+              removePlayIcon(span);
+            }
+          } else {
+            audioPlayer.src = trackInfo.preview_url;
+            audioPlayer.play();
+            if (prevClickedSpan) {
+              removePlayIcon(prevClickedSpan);
+            }
+            addPlayIcon(span);
+            prevClickedSpan = span;
           }
+        } catch (error) {
+          console.error("Error:", error);
         }
+      });
 
-        // Toggle the play icon for the clicked song
-        if (hasPlayIcon) {
-          // If the play icon exists, remove it and the space
+      function addPlayIcon(span: HTMLSpanElement) {
+        const playIcon = document.createElement("i");
+        playIcon.classList.add("fa-solid", "fa-play");
+        span.insertBefore(playIcon, span.firstChild);
+        span.insertBefore(
+          document.createTextNode("\u00A0\u00A0"),
+          playIcon.nextSibling
+        );
+      }
+
+      function removePlayIcon(span: HTMLSpanElement) {
+        const playIcon = span.querySelector(".fa-play");
+        if (playIcon) {
           span.removeChild(playIcon);
           span.removeChild(span.childNodes[0]); // Remove the space
-        } else {
-          // If the play icon doesn't exist, add it along with the space
-          span.insertBefore(playIcon, span.firstChild);
-          span.insertBefore(
-            document.createTextNode("\u00A0\u00A0"),
-            playIcon.nextSibling
-          );
         }
-
-        // Update the prevClickedSpan to the clicked span
-        prevClickedSpan = span;
-      });
+      }
 
       span.classList.add("clickable");
 
@@ -420,6 +508,121 @@ import Layout from "../layouts/Layout.astro";
     });
   }
 
+  interface Track {
+    name: string;
+  }
+
+  // Main function to retrieve and display Gaxve's top tracks and recent releases
+  async function getGaxveSongs(): Promise<void> {
+    try {
+      const token: string = await authenticate();
+      const artistID: string = await getArtistID(token);
+      const latestTracks: Track[] = await getRecentReleases(artistID, token);
+      const highlightedTracks: Track[] = await getTopTracks(artistID, token);
+      displaySongs(latestTracks, "latest");
+      displaySongs(highlightedTracks, "highlighted");
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  let prevClickedSpan: HTMLSpanElement | null = null;
+
+  function updateCoverArt(coverArtUrl: string) {
+    const coverArtImage = document.getElementById(
+      "coverArtImage"
+    ) as HTMLImageElement;
+    if (coverArtImage) {
+      coverArtImage.src = coverArtUrl;
+    }
+  }
+
+  // Function to display songs
+  function displaySongs(songs: Track[], type: string): void {
+    const tracksList: HTMLElement | null = document.getElementById(
+      `tracksList${type.charAt(0).toUpperCase() + type.slice(1)}`
+    );
+    if (!tracksList) return;
+
+    tracksList.innerHTML = "";
+
+    songs.forEach((song) => {
+      const p: HTMLParagraphElement = document.createElement("p");
+      const span: HTMLSpanElement = document.createElement("span");
+
+      span.textContent = "- " + song.name;
+
+      span.addEventListener("click", async (event) => {
+        const audioPlayer = document.getElementById(
+          "audioPlayer"
+        ) as HTMLAudioElement;
+        const coverArtImage = document.getElementById(
+          "coverArtImage"
+        ) as HTMLImageElement;
+        if (!audioPlayer || !coverArtImage) return;
+
+        try {
+          const token = await authenticate();
+          const artistID = await getArtistID(token);
+          const trackName =
+            (event.target as HTMLSpanElement).textContent
+              ?.replace("- ", "")
+              .trim() || "";
+          const trackInfo: any = await getTrackInfo(trackName, artistID, token);
+
+          if (audioPlayer.src === trackInfo.preview_url) {
+            if (audioPlayer.paused) {
+              audioPlayer.play();
+              addPlayIcon(span);
+            } else {
+              audioPlayer.pause();
+              removePlayIcon(span);
+            }
+          } else {
+            audioPlayer.src = trackInfo.preview_url;
+            audioPlayer.play();
+            const prevClickedSpan = tracksList.querySelector(
+              ".clicked"
+            ) as HTMLSpanElement;
+            if (prevClickedSpan) {
+              removePlayIcon(prevClickedSpan);
+              prevClickedSpan.classList.remove("clicked");
+            }
+            addPlayIcon(span);
+            span.classList.add("clicked");
+            updateCoverArt(trackInfo.coverArtUrl);
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+
+      function addPlayIcon(span: HTMLSpanElement) {
+        const playIcon = document.createElement("i");
+        playIcon.classList.add("fa-solid", "fa-play");
+        span.insertBefore(playIcon, span.firstChild);
+        span.insertBefore(
+          document.createTextNode("\u00A0\u00A0"),
+          playIcon.nextSibling
+        );
+      }
+
+      function removePlayIcon(span: HTMLSpanElement) {
+        const playIcon = span.querySelector(".fa-play");
+        if (playIcon) {
+          span.removeChild(playIcon);
+          span.removeChild(span.childNodes[0]);
+        }
+      }
+
+      span.classList.add("clickable");
+
+      p.appendChild(span);
+      if (tracksList) tracksList.appendChild(p);
+    });
+  }
+
+  getGaxveSongs();
   getGaxveRecentReleases();
   getGaxveTopTracks();
 </script>
