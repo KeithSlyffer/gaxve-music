@@ -1,0 +1,42 @@
+<!-- Navbar.astro -->
+<nav class="header-navbar">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/news">News</a></li>
+    <li><a href="/discography">Discography</a></li>
+  </ul>
+</nav>
+
+<style>
+  .header-navbar {
+    position: sticky;
+    top: 0;
+    background-color: #161616;
+    padding: 2rem;
+    padding-inline: 5rem;
+    z-index: 2;
+    box-shadow: 0px 2px 0px rgba(174, 202, 205, 0.5);
+  }
+
+  .header-navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+
+  .header-navbar ul li {
+    margin: 0 10px;
+  }
+
+  .header-navbar ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+
+  .header-navbar ul li a:hover {
+    color: #8cf2ff;
+  }
+</style>
