@@ -1,0 +1,95 @@
+---
+interface Props {
+  text: string;
+  href: string;
+  style: "primary" | "secondary";
+  icon?: {
+    name: string;
+    side: "left" | "right";
+  };
+  isFilled?: boolean;
+  borderVisible?: boolean;
+  classes?: string;
+}
+
+const {
+  text,
+  href,
+  style,
+  icon,
+  isFilled = true,
+  borderVisible = false,
+  classes,
+  ...rest
+} = Astro.props as Props;
+---
+
+<a
+  href={href}
+  class:list={[
+    "link",
+    classes,
+    style,
+    { filled: isFilled, bordered: borderVisible },
+  ]}
+  {...rest}
+>
+  {
+    icon && icon.side === "left" && (
+      <i class={`fa fa-${icon.name}`} aria-hidden="true" />
+    )
+  }
+
+  <span>{text}</span>
+
+  {
+    icon && icon.side === "right" && (
+      <i class={`fa fa-${icon.name}`} aria-hidden="true" />
+    )
+  }
+</a>
+
+<style>
+  .link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+
+  .primary {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+
+  .secondary {
+    background-color: #f8f9fa;
+    color: #007bff;
+    border: 1px solid #007bff;
+  }
+
+  .filled {
+    background-color: #007bff;
+    color: #ffffff;
+  }
+
+  .bordered {
+    border: 1px solid #007bff;
+  }
+
+  .link:hover {
+    opacity: 0.9;
+  }
+
+  i.fa {
+    margin-left: 0.5rem;
+  }
+</style>
+
+<script src="https://kit.fontawesome.com/37e149e4dc.js" crossorigin="anonymous"
+></script>

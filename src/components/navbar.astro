@@ -1,11 +1,32 @@
 <!-- Navbar.astro -->
 <nav class="header-navbar">
   <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/news">News</a></li>
-    <li><a href="/discography">Discography</a></li>
+    <li><a id="homeLink" href="/">Home</a></li>
+    <li><a id="newsLink" href="/news">News</a></li>
+    <li><a id="discographyLink" href="/discography">Discography</a></li>
   </ul>
 </nav>
+
+<script>
+  const currentPath = window.location.pathname;
+
+  const homeLink = document.getElementById("homeLink") as HTMLAnchorElement;
+  const newsLink = document.getElementById("newsLink") as HTMLAnchorElement;
+  const discographyLink = document.getElementById(
+    "discographyLink"
+  ) as HTMLAnchorElement;
+
+  const setActiveLink = (link: HTMLAnchorElement) => {
+    if (link.getAttribute("href") === currentPath) {
+      link.style.color = "#8cf2ff";
+    }
+  };
+
+  // Set active link based on the current path
+  setActiveLink(homeLink);
+  setActiveLink(newsLink);
+  setActiveLink(discographyLink);
+</script>
 
 <style>
   .header-navbar {

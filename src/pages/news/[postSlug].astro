@@ -1,0 +1,32 @@
+---
+import { Query } from "appwrite";
+
+import { databases } from "../../lib/appwrite";
+
+import Layout from "../../layouts/Layout.astro";
+import Container from "../../components/container.astro";
+import Navbar from "../../components/navbar.astro";
+
+const { postSlug } = Astro.params;
+
+const { documents } = await databases.listDocuments(
+  import.meta.env.PUBLIC_DATABASE_ID,
+  import.meta.env.PUBLIC_COLLECTION_ID,
+  [Query.equal("slug", String(postSlug))]
+);
+
+if (!documents.length) {
+  return Astro.redirect("/404");
+}
+
+const post = documents[0];
+---
+
+<Layout title={`${post.title} - My Blog`}>
+  <Navbar />
+  <Container>
+    <article class="prose mx-auto">
+      <Fragment set:html={post.content} />
+    </article>
+  </Container>
+</Layout>

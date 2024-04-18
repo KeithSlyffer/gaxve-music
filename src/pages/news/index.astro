@@ -1,0 +1,117 @@
+---
+import { databases } from "../../lib/appwrite";
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/navbar.astro";
+
+const databaseId = import.meta.env.PUBLIC_DATABASE_ID;
+const collectionID = import.meta.env.PUBLIC_COLLECTION_ID;
+
+const { documents: news } = await databases.listDocuments(
+  databaseId,
+  collectionID
+);
+---
+
+<Layout title="News | Gaxve Music">
+  <main>
+    <Navbar />
+    <ul class={`news-list ${news.length >= 3 ? "justify-between" : ""}`}>
+      {
+        news.map((post) => {
+          console.log(post);
+          return (
+            <li class="news-card dark-mode">
+              <img src={post.image} alt="News Image" class="news-image" />
+              <div class="news-content">
+                <h2>{post.title}</h2>
+                <p class="news-date">
+                  {new Date(post.$createdAt).toLocaleDateString()}
+                </p>
+                <p class="news-excerpt">{post.excerpt}</p>
+                <a href={`/news/${post.slug}`} class="read-more-button">
+                  Read More
+                </a>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </main>
+
+  <style>
+    .news-list {
+      list-style-type: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 5rem;
+    }
+
+    .news-card {
+      flex: 0 0 calc(33.333% - 20px);
+      background-color: #070707;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+      overflow: hidden;
+      padding-bottom: 150px;
+    }
+
+    .news-image {
+      width: 100%;
+      height: auto;
+    }
+
+    .news-content {
+      padding: 20px;
+    }
+
+    .news-content h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .news-date {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .news-excerpt {
+      font-size: 16px;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+
+    .read-more-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .read-more-button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 992px) {
+      .news-card {
+        flex-basis: calc(50% - 20px);
+        padding-bottom: 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .news-card {
+        flex-basis: 100%;
+        padding-bottom: 20px;
+      }
+    }
+  </style>
+</Layout>

@@ -1,0 +1,76 @@
+---
+import Link from "../components/link.astro";
+import Layout from "../layouts/Layout.astro";
+import LottieAnimation from "astro-integration-lottie/Lottie.astro";
+---
+
+<Layout title="Page Not Found">
+  <div class="container">
+    <div class="content">
+      <LottieAnimation
+        src="../../animations/error_animation.json"
+        autoplay="visible"
+      />
+      <h1 class="title">Error 404</h1>
+      <p>The page you were looking for doesn't exits!</p>
+      <Link
+        href="/"
+        style="primary"
+        text="Go Home"
+        icon={{
+          name: "home",
+          side: "right",
+        }}
+      />
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .content {
+    text-align: center;
+    color: white;
+  }
+
+  .title {
+    font-size: 3rem;
+    margin-top: -3rem;
+    margin-bottom: 1rem;
+  }
+
+  .description {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .title {
+      font-size: 2.5rem;
+    }
+
+    .description {
+      font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .title {
+      font-size: 2rem;
+    }
+
+    .description {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<script src="https://kit.fontawesome.com/37e149e4dc.js" crossorigin="anonymous"
+></script>
