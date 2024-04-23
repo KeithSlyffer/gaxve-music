@@ -1,0 +1,220 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/navbar.astro";
+---
+
+<Layout title="Gaxve Music">
+  <main>
+    <Navbar />
+    <div class="content" id="content"></div>
+  </main>
+
+  <style>
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      font-family: "Roboto", sans-serif;
+      gap: 4rem;
+      padding: 3rem;
+    }
+  </style>
+
+  <script
+    src="https://kit.fontawesome.com/37e149e4dc.js"
+    crossorigin="anonymous"></script>
+
+  <script>
+    async function fetchData(
+      url: string | URL | Request,
+      options: RequestInit | undefined
+    ) {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    }
+
+    async function authenticate() {
+      const clientId = import.meta.env.PUBLIC_CLIENT_ID;
+      const clientSecret = import.meta.env.PUBLIC_CLIENT_SECRET;
+      const basicAuth = btoa(`${clientId}:${clientSecret}`);
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${basicAuth}`,
+        },
+        body: "grant_type=client_credentials",
+      };
+      const tokenUrl = "https://accounts.spotify.com/api/token";
+      const data = await fetchData(tokenUrl, options);
+      return data.access_token;
+    }
+
+    async function getArtistID(token: any) {
+      const artistName = "Gaxve";
+      const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
+      const options = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const data = await fetchData(searchUrl, options);
+      return data.artists.items[0].id;
+    }
+
+    async function getRecentReleases(artistID: any, token: any) {
+      const recentReleasesUrl = `https://api.spotify.com/v1/artists/${artistID}/albums?include_groups=album,single&market=US`;
+      const options = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const data = await fetchData(recentReleasesUrl, options);
+      return data.items.slice(0);
+    }
+
+    async function generateCards() {
+      function formatTrackName(name: string): string {
+        return name.toLowerCase().replace(/\s+/g, "-");
+      }
+
+      try {
+        const token = await authenticate();
+        const artistID = await getArtistID(token);
+        const latestTracks = await getRecentReleases(artistID, token);
+
+        const contentDiv = document.getElementById("content");
+
+        latestTracks.forEach(
+          (track: {
+            images: { url: string }[];
+            name: string;
+            artists: any[];
+            release_date: any;
+            external_urls: { spotify: string };
+          }) => {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.style.width = "24rem";
+            card.style.height = "24rem";
+            card.style.borderRadius = "10px";
+            card.style.overflow = "hidden";
+            card.style.cursor = "pointer";
+            card.style.position = "relative";
+            card.style.color = "white";
+            card.style.boxShadow = "0 10px 30px 5px rgba(0, 0, 0, 0.2)";
+            card.style.transition = "transform 0.3s ease-out";
+
+            card.addEventListener("mouseenter", () => {
+              card.style.transform = "scale(1.05)";
+            });
+
+            card.addEventListener("mouseleave", () => {
+              card.style.transform = "scale(1)";
+            });
+
+            // Anchor element to trigger the new tab navigation
+            const anchor = document.createElement("a");
+            anchor.href = `https://distrokid.com/hyperfollow/gaxve/${formatTrackName(track.name)}`;
+            anchor.target = "_blank";
+            anchor.style.display = "none";
+            card.appendChild(anchor);
+
+            card.addEventListener("click", () => {
+              anchor.click();
+            });
+
+            const img = document.createElement("img");
+            img.src = track.images[0]?.url || "";
+            img.alt = track.name || "";
+            img.style.position = "absolute";
+            img.style.objectFit = "cover";
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.top = "0";
+            img.style.left = "0";
+            img.style.opacity = "0.9";
+            img.style.transition = "opacity 0.2s ease-out";
+            card.appendChild(img);
+
+            const cardContent = document.createElement("div");
+            cardContent.className = "card-content";
+            cardContent.style.position = "absolute";
+            cardContent.style.bottom = "-50%";
+            cardContent.style.left = "0";
+            cardContent.style.width = "100%";
+            cardContent.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+            cardContent.style.padding = "1rem";
+            cardContent.style.transition =
+              "bottom 0.3s ease-out, opacity 0.3s ease-out";
+
+            // Displaying song title
+            const title = document.createElement("h2");
+            title.textContent = track.name || "";
+            title.style.margin = "0";
+            title.style.marginBottom = "0.5rem";
+            title.style.fontFamily = "Roboto Condensed, sans-serif";
+            title.style.fontWeight = "normal";
+            cardContent.appendChild(title);
+
+            // Displaying artist names
+            const artists = track.artists
+              .map((artist: { name: any }) => artist.name)
+              .join(", ");
+            const artistNames = document.createElement("p");
+            artistNames.textContent = `${artists}`;
+            artistNames.style.margin = "0";
+            artistNames.style.marginBottom = "0.5rem";
+            artistNames.style.fontFamily = "Roboto Condensed, sans-serif";
+            artistNames.style.fontWeight = "normal";
+            cardContent.appendChild(artistNames);
+
+            // Displaying release date
+            const releaseDate = document.createElement("p");
+            releaseDate.textContent = `Release Date: ${track.release_date || ""}`;
+            releaseDate.style.margin = "0";
+            releaseDate.style.fontFamily = "Roboto Condensed, sans-serif";
+            releaseDate.style.fontWeight = "normal";
+            cardContent.appendChild(releaseDate);
+
+            const button = document.createElement("a");
+            button.textContent = "Click for details";
+            button.style.display = "block";
+            button.style.marginTop = "1rem";
+            button.style.textDecoration = "none";
+            button.style.fontFamily = "Roboto Condensed, sans-serif";
+            button.style.fontWeight = "bold";
+            button.style.color = "white";
+            button.style.transition = "opacity 0.3s ease-out";
+            button.style.position = "relative";
+            button.style.bottom = "0";
+            cardContent.appendChild(button);
+
+            card.appendChild(cardContent);
+            contentDiv?.appendChild(card);
+
+            // Show card content on hover
+            card.addEventListener("mouseenter", () => {
+              cardContent.style.bottom = "0";
+              cardContent.style.opacity = "1";
+            });
+
+            // Hide card content on mouse leave
+            card.addEventListener("mouseleave", () => {
+              cardContent.style.bottom = "-50%";
+              cardContent.style.opacity = "0";
+            });
+          }
+        );
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+
+    generateCards();
+  </script>
+</Layout>
