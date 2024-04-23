@@ -1,9 +1,26 @@
 <!-- Navbar.astro -->
 <nav class="header-navbar">
-  <ul>
+  <ul class="navbar-links">
     <li><a id="homeLink" href="/">Home</a></li>
     <li><a id="newsLink" href="/news">News</a></li>
     <li><a id="discographyLink" href="/discography">Discography</a></li>
+  </ul>
+  <ul class="navbar-icons">
+    <li>
+      <a href="https://www.youtube.com/@gaxve" target="_blank"
+        ><i class="fab fa-youtube"></i></a
+      >
+    </li>
+    <li>
+      <a href="https://www.instagram.com/gaxvemusic/" target="_blank"
+        ><i class="fab fa-instagram"></i></a
+      >
+    </li>
+    <li>
+      <a href="https://www.tiktok.com/@gaxvemusic" target="_blank"
+        ><i class="fab fa-tiktok"></i></a
+      >
+    </li>
   </ul>
 </nav>
 
@@ -36,28 +53,63 @@
     padding: 2rem;
     padding-inline: 5rem;
     z-index: 2;
-    box-shadow: 0px 2px 0px rgba(174, 202, 205, 0.5);
+    box-shadow: 0px 2px 0px rgba(238, 238, 238, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
-  .header-navbar ul {
+  .navbar-links,
+  .navbar-icons {
     list-style-type: none;
     margin: 0;
     padding: 0;
     display: flex;
+    align-items: center;
   }
 
-  .header-navbar ul li {
+  .navbar-links li,
+  .navbar-icons li {
     margin: 0 10px;
   }
 
-  .header-navbar ul li a {
+  .navbar-links li a,
+  .navbar-icons li a {
     text-decoration: none;
     color: #fff;
     font-weight: bold;
     transition: color 0.3s ease;
   }
 
-  .header-navbar ul li a:hover {
+  .navbar-icons {
+    margin-inline: 3rem;
+  }
+
+  .navbar-links li a:hover,
+  .navbar-icons li a:hover {
     color: #8cf2ff;
+  }
+
+  /* FontAwesome icons styling */
+  .fab {
+    font-size: 24px;
+    color: #fff;
+    transition: color 0.3s ease;
+  }
+
+  .fab:hover {
+    color: #8cf2ff;
+  }
+
+  /* Media query for smaller screens */
+  @media (max-width: 768px) {
+    .header-navbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .navbar-icons {
+      margin-top: 1rem;
+    }
   }
 </style>

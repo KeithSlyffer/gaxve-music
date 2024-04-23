@@ -2,6 +2,7 @@
 import { databases } from "../../lib/appwrite";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/navbar.astro";
+import Footer from "../../components/footer.astro";
 
 const databaseId = import.meta.env.PUBLIC_DATABASE_ID;
 const collectionID = import.meta.env.PUBLIC_COLLECTION_ID;
@@ -36,6 +37,7 @@ const { documents: news } = await databases.listDocuments(
         })
       }
     </ul>
+    <Footer />
   </main>
 
   <style>
@@ -49,7 +51,7 @@ const { documents: news } = await databases.listDocuments(
 
     .news-card {
       flex: 0 0 calc(33.333% - 20px);
-      background-color: #070707;
+      background-color: #222831;
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
       margin-bottom: 20px;
@@ -87,7 +89,7 @@ const { documents: news } = await databases.listDocuments(
     }
 
     .read-more-button {
-      background-color: #007bff;
+      background-color: #76abae;
       color: #fff;
       border: none;
       padding: 8px 16px;
@@ -116,4 +118,8 @@ const { documents: news } = await databases.listDocuments(
       }
     }
   </style>
+
+  <script
+    src="https://kit.fontawesome.com/37e149e4dc.js"
+    crossorigin="anonymous"></script>
 </Layout>
