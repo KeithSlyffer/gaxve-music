@@ -8,6 +8,5 @@ import netlify from "@astrojs/netlify";
 export default defineConfig({
   integrations: [icon(), mdx(), lottie()],
   output: "server",
-  site: "https://keithslyffer.github.io",
-  adapter: netlify()
+  adapter: netlify(),
 });
