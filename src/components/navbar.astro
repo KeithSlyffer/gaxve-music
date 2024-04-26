@@ -1,5 +1,12 @@
-<!-- Navbar.astro -->
-<nav class="header-navbar">
+---
+import type { Props } from "astro";
+const { backgroundColor, boxShadow } = Astro.props as Props;
+---
+
+<nav
+  class="header-navbar"
+  style={`background-color: ${backgroundColor}; box-shadow: ${boxShadow};`}
+>
   <ul class="navbar-links">
     <li><a id="homeLink" href="/">Home</a></li>
     <li><a id="newsLink" href="/news">News</a></li>
@@ -22,94 +29,98 @@
       >
     </li>
   </ul>
-</nav>
 
-<script>
-  const currentPath = window.location.pathname;
+  <script>
+    export const props = {
+      backgroundColor: "",
+      boxShadow: "",
+    };
+    const currentPath = window.location.pathname;
 
-  const homeLink = document.getElementById("homeLink") as HTMLAnchorElement;
-  const newsLink = document.getElementById("newsLink") as HTMLAnchorElement;
-  const discographyLink = document.getElementById(
-    "discographyLink"
-  ) as HTMLAnchorElement;
+    const homeLink = document.getElementById("homeLink") as HTMLAnchorElement;
+    const newsLink = document.getElementById("newsLink") as HTMLAnchorElement;
+    const discographyLink = document.getElementById(
+      "discographyLink"
+    ) as HTMLAnchorElement;
 
-  const setActiveLink = (link: HTMLAnchorElement) => {
-    if (link.getAttribute("href") === currentPath) {
-      link.style.color = "#9d96ff";
-    }
-  };
+    const setActiveLink = (link: HTMLAnchorElement) => {
+      if (link.getAttribute("href") === currentPath) {
+        link.style.color = "#9d96ff";
+      }
+    };
 
-  // Set active link based on the current path
-  setActiveLink(homeLink);
-  setActiveLink(newsLink);
-  setActiveLink(discographyLink);
-</script>
+    // Set active link based on the current path
+    setActiveLink(homeLink);
+    setActiveLink(newsLink);
+    setActiveLink(discographyLink);
+  </script>
 
-<style>
-  .header-navbar {
-    position: sticky;
-    top: 0;
-    background-color: #161616;
-    padding: 2rem;
-    padding-inline: 5rem;
-    z-index: 2;
-    box-shadow: 0px 2px 0px rgba(238, 238, 238, 0.5);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .navbar-links,
-  .navbar-icons {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-  }
-
-  .navbar-links li,
-  .navbar-icons li {
-    margin: 0 10px;
-  }
-
-  .navbar-links li a,
-  .navbar-icons li a {
-    text-decoration: none;
-    color: #fff;
-    font-weight: bold;
-    transition: color 0.3s ease;
-  }
-
-  .navbar-icons {
-    margin-inline: 3rem;
-  }
-
-  .navbar-links li a:hover,
-  .navbar-icons li a:hover {
-    color: #776dff;
-  }
-
-  /* FontAwesome icons styling */
-  .fab {
-    font-size: 24px;
-    color: #fff;
-    transition: color 0.3s ease;
-  }
-
-  .fab:hover {
-    color: #776dff;
-  }
-
-  /* Media query for smaller screens */
-  @media (max-width: 768px) {
+  <style>
     .header-navbar {
-      flex-direction: column;
-      align-items: flex-start;
+      position: sticky;
+      top: 0;
+      background-color: #161616;
+      padding: 2rem;
+      padding-inline: 5rem;
+      z-index: 2;
+      box-shadow: 0px 2px 0px rgba(238, 238, 238, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-links,
+    .navbar-icons {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-links li,
+    .navbar-icons li {
+      margin: 0 10px;
+    }
+
+    .navbar-links li a,
+    .navbar-icons li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      transition: color 0.3s ease;
     }
 
     .navbar-icons {
-      margin-top: 1rem;
+      margin-inline: 3rem;
     }
-  }
-</style>
+
+    .navbar-links li a:hover,
+    .navbar-icons li a:hover {
+      color: #776dff;
+    }
+
+    /* FontAwesome icons styling */
+    .fab {
+      font-size: 24px;
+      color: #fff;
+      transition: color 0.3s ease;
+    }
+
+    .fab:hover {
+      color: #776dff;
+    }
+
+    /* Media query for smaller screens */
+    @media (max-width: 768px) {
+      .header-navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .navbar-icons {
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</nav>
