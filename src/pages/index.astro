@@ -1,25 +1,297 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Navbar from "../components/navbar.astro";
-import Footer from "../components/footer.astro";
 ---
 
 <Layout title="Gaxve Music">
-  <main style="height: 100vh;">
-    <!--Calling Navbar component -->
-    <Navbar backgroundColor="transparent" boxShadow="0px 0px 0px " />
+  <main class="container">
+    <div class="content">
+      <div class="middle-text">Gaxve</div>
+      <nav class="navigation">
+        <ul>
+          <li><a href="/news"><i class="fas fa-newspaper"></i> News</a></li>
+          <li>
+            <a href="/discography"><i class="fas fa-music"></i> Discography</a>
+          </li>
+          <li><a href="/links"><i class="fas fa-link"></i> Links</a></li>
+        </ul>
+      </nav>
+      <ul class="social-media">
+        <!-- Spotify -->
+        <li>
+          <a
+            href="https://open.spotify.com/artist/1L0bkjAeGfKK7BWscIMWKk?si=7d4061debff94309"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-spotify social-icon"></i>
+          </a>
+        </li>
+        <!-- Soundcloud -->
+        <li>
+          <a
+            href="https://soundcloud.com/gaxve"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-soundcloud social-icon"></i>
+          </a>
+        </li>
+        <!-- Instagram -->
+        <li>
+          <a
+            href="https://www.instagram.com/gaxvemusic/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-instagram social-icon"></i>
+          </a>
+        </li>
+        <!-- YouTube -->
+        <li>
+          <a
+            href="https://www.youtube.com/@gaxve"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-youtube social-icon"></i>
+          </a>
+        </li>
+        <!-- Twitter -->
+        <li>
+          <a
+            href="https://twitter.com/GaxveMusic"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-twitter social-icon"></i>
+          </a>
+        </li>
+        <!-- Bandcamp -->
+        <li>
+          <a
+            href="https://gaxve.bandcamp.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-bandcamp social-icon"></i>
+          </a>
+        </li>
+        <!-- TikTok -->
+        <li>
+          <a
+            href="https://www.tiktok.com/@gaxvemusic"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-link"
+          >
+            <i class="fab fa-tiktok social-icon"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
   </main>
-  <Footer />
 </Layout>
 
 <style>
+  html,
   body {
-    background-image: url("/media/Background.png");
-    background-size: cover;
-    background-repeat: no-repeat;
+    height: 100%;
+    margin: 0;
   }
-  .navbar {
-    background-color: transparent;
+
+  .container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-size: cover;
+    background-position: center;
+    background-image: url("/media/background.png");
+    position: relative;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-left: 250px;
+  }
+
+  .middle-text {
+    color: #f9f6ee;
+    font-size: 16rem;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-shadow: 3px 3px 4px black;
+    font-family: "Josefin Sans", sans-serif;
+    margin-bottom: -50px;
+  }
+
+  @media (max-width: 1200px) {
+    .middle-text {
+      font-size: 12rem;
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .middle-text {
+      font-size: 10rem;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .middle-text {
+      font-size: 8rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .middle-text {
+      font-size: 7rem;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .middle-text {
+      font-size: 6rem;
+    }
+  }
+
+  .navigation {
+    margin-top: 30px;
+    margin-left: 0;
+  }
+
+  .navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .navigation li {
+    margin: 10px 0;
+  }
+
+  .navigation a {
+    text-decoration: none;
+    color: #1b1b1b;
+    font-weight: bold;
+    transition:
+      background-color 0.3s ease,
+      width 0.3s ease;
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: #f9f6ee;
+    width: 250px;
+    font-size: 1.5em;
+  }
+
+  .navigation a i {
+    font-size: 32px;
+    color: #1b1b1b;
+    margin-right: 15px;
+  }
+
+  .navigation a:hover {
+    background-color: #4169e1;
+    color: #f9f6ee;
+    width: 500px;
+  }
+
+  .navigation a:hover i {
+    color: #f9f6ee;
+  }
+
+  @media only screen and (max-width: 1300px),
+    only screen and (max-width: 800px) {
+    .container {
+      background-image: url("/media/background-mobile.png");
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .content {
+      margin-top: auto;
+      margin-left: 0;
+      margin-bottom: 50px;
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    .navigation {
+      margin-left: 0;
+    }
+    .navigation ul {
+      align-items: center;
+    }
+  }
+
+  .social-media {
+    list-style: none;
+    padding: 0;
+    margin: 50px 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .social-media li {
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 0 5px;
+  }
+
+  .social-link {
+    text-decoration: none;
+  }
+
+  .social-icon {
+    font-size: 24px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .social-link:hover .social-icon {
+    transform: scale(1.2);
+  }
+
+  .fab.fa-spotify {
+    color: #1db954;
+  }
+
+  .fab.fa-soundcloud {
+    color: #ff691e;
+  }
+
+  .fab.fa-instagram {
+    color: #e4405f;
+  }
+
+  .fab.fa-youtube {
+    color: #ff1919;
+  }
+
+  .fab.fa-twitter {
+    color: #1da1f2;
+  }
+
+  .fab.fa-bandcamp {
+    color: #629aa9;
+  }
+
+  .fab.fa-tiktok {
+    color: #d35cf7;
   }
 </style>
 

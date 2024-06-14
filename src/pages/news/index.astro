@@ -14,7 +14,7 @@ const { documents: news } = await databases.listDocuments(
 ---
 
 <Layout title="News | Gaxve Music">
-  <main>
+  <main style="display: flex; flex-direction: column; min-height: 100vh;">
     <Navbar />
     <ul class={`news-list ${news.length >= 3 ? "justify-between" : ""}`}>
       {
@@ -37,7 +37,7 @@ const { documents: news } = await databases.listDocuments(
         })
       }
     </ul>
-    <Footer />
+    <Footer style="margin-top: auto;" />
   </main>
 
   <style>
