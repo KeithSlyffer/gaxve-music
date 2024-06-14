@@ -7,28 +7,15 @@ const { backgroundColor, boxShadow } = Astro.props as Props;
   class="header-navbar"
   style={`background-color: ${backgroundColor}; box-shadow: ${boxShadow};`}
 >
+  <a href="/" class="navbar-brand">
+    <span class="gaxve">GAXVE</span>
+    <span class="music">MUSIC</span>
+  </a>
   <ul class="navbar-links">
     <li><a id="homeLink" href="/">Home</a></li>
-    <li><a id="newsLink" href="/news">News</a></li>
+    <li><a id="newsLink" href="/posts">Posts</a></li>
     <li><a id="discographyLink" href="/discography">Songs</a></li>
     <li><a id="linksLink" href="/links">Links</a></li>
-  </ul>
-  <ul class="navbar-icons">
-    <li>
-      <a href="https://www.youtube.com/@gaxve" target="_blank"
-        ><i class="fab fa-youtube"></i></a
-      >
-    </li>
-    <li>
-      <a href="https://www.instagram.com/gaxvemusic/" target="_blank"
-        ><i class="fab fa-instagram"></i></a
-      >
-    </li>
-    <li>
-      <a href="https://www.tiktok.com/@gaxvemusic" target="_blank"
-        ><i class="fab fa-tiktok"></i></a
-      >
-    </li>
   </ul>
 
   <script>
@@ -47,7 +34,7 @@ const { backgroundColor, boxShadow } = Astro.props as Props;
 
     const setActiveLink = (link: HTMLAnchorElement) => {
       if (link.getAttribute("href") === currentPath) {
-        link.style.color = "#9d96ff";
+        link.style.color = "#4169e1";
       }
     };
 
@@ -72,8 +59,21 @@ const { backgroundColor, boxShadow } = Astro.props as Props;
       align-items: center;
     }
 
-    .navbar-links,
-    .navbar-icons {
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.5rem;
+      text-decoration: none;
+    }
+
+    .gaxve {
+      color: #4169e1;
+    }
+
+    .music {
+      color: #fff;
+    }
+
+    .navbar-links {
       list-style-type: none;
       margin: 0;
       padding: 0;
@@ -81,47 +81,28 @@ const { backgroundColor, boxShadow } = Astro.props as Props;
       align-items: center;
     }
 
-    .navbar-links li,
-    .navbar-icons li {
+    .navbar-links li {
       margin: 0 10px;
     }
 
-    .navbar-links li a,
-    .navbar-icons li a {
+    .navbar-links li a {
       text-decoration: none;
       color: #fff;
       font-weight: bold;
       transition: color 0.3s ease;
     }
 
-    .navbar-icons {
-      margin-inline: 3rem;
+    .navbar-links li a:hover {
+      color: #4169e1;
     }
 
-    .navbar-links li a:hover,
-    .navbar-icons li a:hover {
-      color: #776dff;
-    }
-
-    /* FontAwesome icons styling */
-    .fab {
-      font-size: 24px;
-      color: #fff;
-      transition: color 0.3s ease;
-    }
-
-    .fab:hover {
-      color: #776dff;
-    }
-
-    /* Media query for smaller screens */
     @media (max-width: 768px) {
       .header-navbar {
         flex-direction: column;
         align-items: flex-start;
       }
 
-      .navbar-icons {
+      .navbar-links {
         margin-top: 1rem;
       }
     }

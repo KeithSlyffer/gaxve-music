@@ -4,152 +4,181 @@ import Navbar from "../../components/navbar.astro";
 import Footer from "../../components/footer.astro";
 ---
 
-<Layout title="News | Gaxve Music">
+<Layout title="Posts | Gaxve Music">
   <main style="display: flex; flex-direction: column; min-height: 100vh;">
     <Navbar style="flex-shrink: 0;" />
 
-    <div
-      style="flex-grow: 1; display: flex; justify-content: center; align-items: center; margin-top: 100px;"
-    >
-      <ul
-        style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap;"
-      >
-        <!-- Spotify -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://open.spotify.com/artist/1L0bkjAeGfKK7BWscIMWKk?si=7d4061debff94309"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-spotify social-icon"
-              style="font-size: 80px; color: #1DB954; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #1DB954;">Spotify</div>
-          </a>
-        </li>
-        <!-- Soundcloud -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://soundcloud.com/gaxve"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-soundcloud social-icon"
-              style="font-size: 80px; color: #ff691e; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #ff691e;">Soundcloud</div>
-          </a>
-        </li>
-        <!-- Instagram -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://www.instagram.com/gaxvemusic/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-instagram social-icon"
-              style="font-size: 80px; color: #E4405F; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #E4405F;">Instagram</div>
-          </a>
-        </li>
-        <!-- YouTube -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://www.youtube.com/@gaxve"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-youtube social-icon"
-              style="font-size: 80px; color: #ff1919; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #ff1919;">YouTube</div>
-          </a>
-        </li>
-        <!-- Twitter -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://twitter.com/GaxveMusic"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-twitter social-icon"
-              style="font-size: 80px; color: #1DA1F2; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #1DA1F2;">Twitter</div>
-          </a>
-        </li>
-        <!-- Bandcamp -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://gaxve.bandcamp.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-bandcamp social-icon"
-              style="font-size: 80px; color: #629AA9; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #629AA9;">Bandcamp</div>
-          </a>
-        </li>
-        <!-- TikTok -->
-        <li style="margin-bottom: 60px; text-align: center; padding: 0 30px;">
-          <a
-            href="https://www.tiktok.com/@gaxvemusic"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-link"
-            style="text-decoration: none;"
-          >
-            <i
-              class="fab fa-tiktok social-icon"
-              style="font-size: 80px; color: #d35cf7; margin-bottom: 20px;"></i>
-            <div style="font-size: 36px; color: #d35cf7;">TikTok</div>
-          </a>
-        </li>
-      </ul>
-    </div>
+    <div style="flex-grow: 1; margin-top: 60px; padding: 0 5%;">
+      <!-- Social links column -->
+      <div class="social-column">
+        <ul class="social-list">
+          <!-- Spotify -->
+          <li class="social-item">
+            <a
+              href="https://open.spotify.com/artist/1L0bkjAeGfKK7BWscIMWKk?si=7d4061debff94309"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-spotify social-icon" style="color: #1DB954;"></i>
+              <div class="social-text" style="color: #1DB954;">Spotify</div>
+            </a>
+          </li>
+          <!-- Soundcloud -->
+          <li class="social-item">
+            <a
+              href="https://soundcloud.com/gaxve"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-soundcloud social-icon" style="color: #ff691e;"
+              ></i>
+              <div class="social-text" style="color: #ff691e;">Soundcloud</div>
+            </a>
+          </li>
+          <!-- Instagram -->
+          <li class="social-item">
+            <a
+              href="https://www.instagram.com/gaxvemusic/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-instagram social-icon" style="color: #E4405F;"
+              ></i>
+              <div class="social-text" style="color: #E4405F;">Instagram</div>
+            </a>
+          </li>
+          <!-- YouTube -->
+          <li class="social-item">
+            <a
+              href="https://www.youtube.com/@gaxve"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-youtube social-icon" style="color: #ff1919;"></i>
+              <div class="social-text" style="color: #ff1919;">YouTube</div>
+            </a>
+          </li>
+          <!-- Twitter -->
+          <li class="social-item">
+            <a
+              href="https://twitter.com/GaxveMusic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-twitter social-icon" style="color: #1DA1F2;"></i>
+              <div class="social-text" style="color: #1DA1F2;">Twitter</div>
+            </a>
+          </li>
+          <!-- Bandcamp -->
+          <li class="social-item">
+            <a
+              href="https://gaxve.bandcamp.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-bandcamp social-icon" style="color: #629AA9;"
+              ></i>
+              <div class="social-text" style="color: #629AA9;">Bandcamp</div>
+            </a>
+          </li>
+          <!-- TikTok -->
+          <li class="social-item">
+            <a
+              href="https://www.tiktok.com/@gaxvemusic"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social-link"
+            >
+              <i class="fab fa-tiktok social-icon" style="color: #d35cf7;"></i>
+              <div class="social-text" style="color: #d35cf7;">TikTok</div>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-    <div style="display: flex; justify-content: center; margin-top: 40px;">
-      <iframe
-        style="border-radius:12px; margin-bottom: 100px;"
-        src="https://open.spotify.com/embed/artist/1L0bkjAeGfKK7BWscIMWKk?utm_source=generator"
-        width="70%"
-        height="352"
-        frameborder="0"
-        allowfullscreen=""
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"></iframe>
+      <!-- Spotify iframe -->
+      <div class="iframe-container">
+        <iframe
+          style="border-radius: 12px; width: 100%;"
+          src="https://open.spotify.com/embed/artist/1L0bkjAeGfKK7BWscIMWKk?utm_source=generator"
+          height="680"
+          frameborder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"></iframe>
+      </div>
     </div>
 
     <Footer style="flex-shrink: 0;" />
   </main>
 
   <style>
-    @media (max-width: 768px) {
-      ul li {
-        padding: 0 30px;
-      }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Play", sans-serif;
+    }
+
+    .social-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .social-item {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .social-link {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #050505;
+      padding: 20px;
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+
+    .social-link:hover {
+      background-color: #333;
     }
 
     .social-icon {
+      font-size: 40px;
+      margin-right: 20px;
       transition: transform 0.3s ease;
+    }
+
+    .social-text {
+      font-size: 24px;
     }
 
     .social-link:hover .social-icon {
       transform: scale(1.2);
+    }
+
+    .iframe-container {
+      margin-top: 20px;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .social-link {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .iframe-container {
+        margin-top: 40px;
+      }
     }
   </style>
 

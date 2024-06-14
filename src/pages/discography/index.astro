@@ -14,6 +14,12 @@ import Footer from "../../components/footer.astro";
   </main>
 
   <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Play", sans-serif;
+    }
+
     .content {
       display: flex;
       flex-wrap: wrap;
@@ -22,6 +28,19 @@ import Footer from "../../components/footer.astro";
       font-family: "Roboto", sans-serif;
       gap: 4rem;
       padding: 3rem;
+    }
+
+    .card-content {
+      font-family: "Play", sans-serif;
+      position: absolute;
+      bottom: -50%;
+      left: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 1rem;
+      transition:
+        bottom 0.3s ease-out,
+        opacity 0.3s ease-out;
     }
   </style>
 
@@ -161,7 +180,7 @@ import Footer from "../../components/footer.astro";
             title.textContent = track.name || "";
             title.style.margin = "0";
             title.style.marginBottom = "0.5rem";
-            title.style.fontFamily = "Roboto Condensed, sans-serif";
+            title.style.fontFamily = "Play, sans-serif";
             title.style.fontWeight = "normal";
             cardContent.appendChild(title);
 
@@ -173,7 +192,7 @@ import Footer from "../../components/footer.astro";
             artistNames.textContent = `${artists}`;
             artistNames.style.margin = "0";
             artistNames.style.marginBottom = "0.5rem";
-            artistNames.style.fontFamily = "Roboto Condensed, sans-serif";
+            artistNames.style.fontFamily = "Play, sans-serif";
             artistNames.style.fontWeight = "normal";
             cardContent.appendChild(artistNames);
 
@@ -181,7 +200,7 @@ import Footer from "../../components/footer.astro";
             const releaseDate = document.createElement("p");
             releaseDate.textContent = `Release Date: ${track.release_date || ""}`;
             releaseDate.style.margin = "0";
-            releaseDate.style.fontFamily = "Roboto Condensed, sans-serif";
+            releaseDate.style.fontFamily = "Play, sans-serif";
             releaseDate.style.fontWeight = "normal";
             cardContent.appendChild(releaseDate);
 
@@ -190,9 +209,9 @@ import Footer from "../../components/footer.astro";
             button.style.display = "block";
             button.style.marginTop = "1rem";
             button.style.textDecoration = "none";
-            button.style.fontFamily = "Roboto Condensed, sans-serif";
+            button.style.fontFamily = "Play, sans-serif";
             button.style.fontWeight = "bold";
-            button.style.color = "#9d96ff";
+            button.style.color = "#4169e1";
             button.style.transition = "opacity 0.3s ease-out";
             button.style.position = "relative";
             button.style.bottom = "0";
