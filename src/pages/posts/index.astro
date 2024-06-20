@@ -13,7 +13,7 @@ const { documents: posts } = await databases.listDocuments(
 );
 ---
 
-<Layout title="Posts | Gaxve Music">
+<Layout title="Gaxve Music">
   <main style="display: flex; flex-direction: column; min-height: 100vh;">
     <Navbar />
     <ul class={`posts-list ${posts.length >= 3 ? "justify-between" : ""}`}>
